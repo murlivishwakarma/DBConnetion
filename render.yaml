@@ -1,33 +1,29 @@
-# This file tells Render how to deploy your FastAPI application.
-# Corrected the database service type to 'postgres' based on the error.
+# render.yaml
+# This file tells Render how to deploy your FastAPI + PostgreSQL app.
 
 services:
   # 1. PostgreSQL Database
-  # Corrected 'type: db' to 'type: postgres'
-  - type: postgres
+  - type: pserv
     name: postgres-db
-    plan: free # Use the free Postgres tier
-    autoDeploy: false # Good practice to disable auto-deploy on databases
-    # 'engine: postgres' is implied by the type and not needed
+    env: postgres
+    plan: free
+    autoDeploy: false
 
-  # 2. The FastAPI Application (as a Web Service)
+  # 2. FastAPI Web Service
   - type: web
     name: fastapi-db-api
-    plan: free # Explicitly use the free tier for the web service
-    runtime: docker # Assumes you have a Dockerfile in your repo
-    dockerContext: .
+    env: docker
+    plan: free
     dockerfilePath: Dockerfile
-    # Changed health check to '/tables' as '/db-info' requires an API key
+    dockerContext: .
     healthCheckPath: /tables
+
     envVars:
-      # Connect to the Postgres service you just added
       - key: DATABASE_URL
         fromService:
-          type: postgres # Corrected 'db' to 'postgres' to match the service type
+          type: pserv
           name: postgres-db
-          property: connectionString # This provides the URL to your app
-      # Add your API Key
-      # I recommend setting this as a "Secret" in your Render service dashboard
-      - key: CONNECT_API_KEY
-        value: "your-secret-api-key-goes-here"
+          property: connectionString
 
+      - key: CONNECT_API_KEY
+        sync: false  # set this manually in Render Dashboard under "Environment"
