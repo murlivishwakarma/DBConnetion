@@ -1,15 +1,14 @@
 # This file tells Render how to deploy your FastAPI application.
-# I've corrected the service types to fix the deployment errors.
+# Corrected the database service type to 'postgres' based on the error.
 
 services:
   # 1. PostgreSQL Database
-  # Corrected 'type: pserv' to 'type: db'
-  # Added 'engine: postgres' to be explicit
-  - type: db
+  # Corrected 'type: db' to 'type: postgres'
+  - type: postgres
     name: postgres-db
-    engine: postgres # Specify the database engine
     plan: free # Use the free Postgres tier
     autoDeploy: false # Good practice to disable auto-deploy on databases
+    # 'engine: postgres' is implied by the type and not needed
 
   # 2. The FastAPI Application (as a Web Service)
   - type: web
@@ -24,7 +23,7 @@ services:
       # Connect to the Postgres service you just added
       - key: DATABASE_URL
         fromService:
-          type: db # Corrected 'pserv' to 'db' to match the service above
+          type: postgres # Corrected 'db' to 'postgres' to match the service type
           name: postgres-db
           property: connectionString # This provides the URL to your app
       # Add your API Key
