@@ -1,12 +1,11 @@
 services:
-  # 1) Render Postgres (managed)
-  - type: pserv
+  # 1) Managed Render Postgres Database
+  - type: postgres
     name: postgres-db
-    env: postgres
     plan: free
     autoDeploy: false
 
-  # 2) Your FastAPI app (Docker)
+  # 2) FastAPI App (Docker)
   - type: web
     name: fastapi-db-api
     env: docker
@@ -17,7 +16,7 @@ services:
     envVars:
       - key: DATABASE_URL
         fromService:
-          type: pserv
+          type: postgres
           name: postgres-db
           property: connectionString
       - key: CONNECT_API_KEY
