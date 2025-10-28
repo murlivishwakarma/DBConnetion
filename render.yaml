@@ -1,11 +1,15 @@
 # This file tells Render how to deploy your FastAPI application.
+# I've corrected the service types to fix the deployment errors.
 
 services:
   # 1. PostgreSQL Database
-  # This provides persistent storage for your SQL-based endpoints (/db-info, /query, etc.)
-  - type: pserv
+  # Corrected 'type: pserv' to 'type: db'
+  # Added 'engine: postgres' to be explicit
+  - type: db
     name: postgres-db
+    engine: postgres # Specify the database engine
     plan: free # Use the free Postgres tier
+    autoDeploy: false # Good practice to disable auto-deploy on databases
 
   # 2. The FastAPI Application (as a Web Service)
   - type: web
@@ -14,12 +18,13 @@ services:
     runtime: docker # Assumes you have a Dockerfile in your repo
     dockerContext: .
     dockerfilePath: Dockerfile
-    healthCheckPath: /db-info # Use a valid endpoint for health checks
+    # Changed health check to '/tables' as '/db-info' requires an API key
+    healthCheckPath: /tables
     envVars:
       # Connect to the Postgres service you just added
       - key: DATABASE_URL
         fromService:
-          type: pserv
+          type: db # Corrected 'pserv' to 'db' to match the service above
           name: postgres-db
           property: connectionString # This provides the URL to your app
       # Add your API Key
