@@ -153,7 +153,7 @@ def api_tables():
         raise HTTPException(status_code=500, detail=str(exc))
 
 
-@app.get('/tables/{table}/columns')
+@app.get('/tables/columns/{tabel}')
 def api_columns(table: str):
     try:
         return list_columns(table)
@@ -192,4 +192,5 @@ def api_push_chart(payload: PushChartRequest):
         return {"saved": True, "record": record}
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
+
 
