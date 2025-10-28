@@ -1,0 +1,29 @@
+# This file tells Render how to deploy your FastAPI application.
+
+services:
+  # 1. PostgreSQL Database
+  # This provides persistent storage for your SQL-based endpoints (/db-info, /query, etc.)
+  - type: pserv
+    name: postgres-db
+    plan: free # Use the free Postgres tier
+
+  # 2. The FastAPI Application (as a Web Service)
+  - type: web
+    name: fastapi-db-api
+    plan: free # Explicitly use the free tier for the web service
+    runtime: docker # Assumes you have a Dockerfile in your repo
+    dockerContext: .
+    dockerfilePath: Dockerfile
+    healthCheckPath: /db-info # Use a valid endpoint for health checks
+    envVars:
+      # Connect to the Postgres service you just added
+      - key: DATABASE_URL
+        fromService:
+          type: pserv
+          name: postgres-db
+          property: connectionString # This provides the URL to your app
+      # Add your API Key
+      # I recommend setting this as a "Secret" in your Render service dashboard
+      - key: CONNECT_API_KEY
+        value: "your-secret-api-key-goes-here"
+
