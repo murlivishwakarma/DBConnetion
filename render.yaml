@@ -1,15 +1,12 @@
-# render.yaml
-# This file tells Render how to deploy your FastAPI + PostgreSQL app.
-
 services:
-  # 1. PostgreSQL Database
+  # 1) Render Postgres (managed)
   - type: pserv
     name: postgres-db
     env: postgres
     plan: free
     autoDeploy: false
 
-  # 2. FastAPI Web Service
+  # 2) Your FastAPI app (Docker)
   - type: web
     name: fastapi-db-api
     env: docker
@@ -17,13 +14,11 @@ services:
     dockerfilePath: Dockerfile
     dockerContext: .
     healthCheckPath: /tables
-
     envVars:
       - key: DATABASE_URL
         fromService:
           type: pserv
           name: postgres-db
           property: connectionString
-
       - key: CONNECT_API_KEY
-        sync: false  # set this manually in Render Dashboard under "Environment"
+        sync: false
