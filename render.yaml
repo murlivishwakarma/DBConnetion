@@ -1,12 +1,4 @@
 services:
-  # 1) Managed PostgreSQL Database
-  - type: pserv
-    name: postgres-db
-    env: postgres
-    plan: free
-    autoDeploy: false
-
-  # 2) FastAPI App (Docker)
   - type: web
     name: fastapi-db-api
     env: docker
@@ -16,9 +8,6 @@ services:
     healthCheckPath: /tables
     envVars:
       - key: DATABASE_URL
-        fromService:
-          type: pserv
-          name: postgres-db
-          property: connectionString
+        sync: false
       - key: CONNECT_API_KEY
         sync: false
