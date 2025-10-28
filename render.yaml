@@ -1,7 +1,8 @@
 services:
-  # 1) Managed Render Postgres Database
-  - type: postgres
+  # 1) Managed PostgreSQL Database
+  - type: pserv
     name: postgres-db
+    env: postgres
     plan: free
     autoDeploy: false
 
@@ -16,7 +17,7 @@ services:
     envVars:
       - key: DATABASE_URL
         fromService:
-          type: postgres
+          type: pserv
           name: postgres-db
           property: connectionString
       - key: CONNECT_API_KEY
